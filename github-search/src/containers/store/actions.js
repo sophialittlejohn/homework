@@ -5,4 +5,11 @@ export const usersAction = users => {
     }
 }
 
+export const errorAction = error => {
+    return{
+        type: 'SET_ERROR',
+        payload: error
+    }
+}
+
 

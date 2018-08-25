@@ -5,7 +5,6 @@ import registerServiceWorker from './registerServiceWorker';
 import {Provider} from 'react-redux';
 import App from "./containers/App/App";
 import store from "./containers/store";
-import {Router} from "react-router";
 
 
 ReactDOM.render(

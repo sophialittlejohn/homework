@@ -1,0 +1,16 @@
+.active {
+  background-color: lightgray;
+  padding: 5px;
+}
+
+.inactive {
+  padding: 5px;
+}
+
+.results {
+  display: flex;
+  align-items: center;
+  &:focus {
+    outline: none;
+  }
+}

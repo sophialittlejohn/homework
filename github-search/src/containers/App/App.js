@@ -2,111 +2,100 @@ import React, {Component} from 'react';
 import './index.css';
 import {connect} from "react-redux";
 import {fetchUsers} from "../store/helpers";
-import Result from "../Result";
-import {withRouter} from "react-router";
+import SearchResult from "../../components/SearchResult";
+import puppies from "../../assets/images/puppies.jpeg"
+import kittenAndPuppy from "../../assets/images/kitten_puppy.jpg"
+import kittens from "../../assets/images/kittens.jpg"
 
 
 class App extends Component {
-    // if arrow key is pressed set index to index+1 / index-1
-    // figure out how to clear component when search.length === 0
-    // componentWillReceiveProps the search was up to date, but ended up exceed max request
-    // shouldComponentUpdate search is always a letter behind :/ same with using handleInput
-
     constructor (props) {
         super(props)
 
         this.state = {
             search: '',
-            active: null,
-            index: 0,
-            users: []
+            activeIndex: 0,
         }
     }
 
-    handleInput = (e) => {
-        this.setState({search: e.currentTarget.value}, this.handleSearch())
-        //this.props.dispatch(fetchUsers(this.state.search))
+    componentWillMount () {
+        document.addEventListener("keydown", this.handleArrowPress);
     }
 
-    handleSearch () {
-        this.props.dispatch(fetchUsers(this.state.search))
+    componentWillUnmount () {
+        document.removeEventListener("keydown", this.handleArrowPress);
     }
 
     componentWillReceiveProps () {
-        console.log('componentWillReceiveProps')
         if (this.props.users.users) {
             this.setState({
-                active: this.props.users.users[this.state.index],
-                users: this.props.users.users,
+                active: this.props.users.users[this.state.activeIndex],
             })
         }
     }
 
-    // shouldComponentUpdate (nextProps, nextState) {
-    //     console.log('shouldComponentUpdate', nextState)
-    //     console.log('shouldComponentUpdate', this.state.search)
-    //     if (nextState.search !== this.state.search) {
-    //         console.log('here')
-    //         this.props.dispatch(fetchUsers(nextState.search))
-    //         return true
-    //     }
-    //     return false
-    // }
+    handleInput = (e) => {
+        this.setState({search: e.currentTarget.value}, () => this.props.dispatch(fetchUsers(this.state.search)))
+    }
 
-    handleKeyPress = (event, userHTML) => {
-        console.log(event)
-        if (event.key === 'ArrowDown') {
-            console.log('ArrowDown press here! ')
-            const index = this.state.index
-            if (index >= this.state.users.length) {
-                this.setState({index: index + 1})
+    handleEnterPress = event => {
+        if (event.key === 'Enter' && this.props.users.users) {
+            window.location = this.props.users.users[this.state.activeIndex].html_url;
+        }
+    }
+
+    handleArrowPress = event => {
+        let index = this.state.activeIndex
+        if (this.props.users.users && index <= this.props.users.users.length - 1) {
+            if (event.key === 'ArrowDown') {
+                this.setState({activeIndex: index + 1})
+            }
+            if (event.key === 'ArrowUp' && index > 0) {
+                this.setState({activeIndex: index - 1})
             }
         }
-        if (event.key === 'ArrowUp') {
-            console.log('ArrowUp press here! ')
-            const index = this.state.index
-            if (index > 0) {
-                this.setState({index: index - 1})
-            }
-        }
-        // if (event.key === 'Enter') {
-        //     console.log('Enter press here! ')
-        //     this.props.history.push(`${userHTML}`)
-        // }
+    }
+
+    handleUserClick = event => {
+        const clickedUser = this.props.users.users.find(user => user.login === event.currentTarget.innerHTML)
+        window.location = clickedUser.html_url
     }
 
     render () {
-        // console.log('active', this.state.active)
         return (
             <div className="container">
+                <h1>Sophia's Github User Search</h1>
                 <div className='search'>
-                    <div className='search-element'>
-                        <input type='text'
-                               placeholder='Search Github Users...'
-                               className='search-input'
-                               onChange={this.handleInput}
-                               onKeyDown={(e) => this.handleKeyPress(e)}
-                               value={this.state.search}/>
-                    </div>
+                    <input type='text'
+                           placeholder='Search Github Users...'
+                           className='search-input'
+                           onChange={this.handleInput}
+                           onKeyDown={(e) => this.handleEnterPress(e)}
+                           value={this.state.search}
+                    />
                     <div className='search-container'>
-                        {this.state.users ?
-                            this.state.users.map(user => {
-                                return <Result
+                        {this.props.users.users && this.state.search ?
+                            this.props.users.users.map(user => {
+                                return <SearchResult
                                     key={user.id}
                                     user={user.login}
                                     avatar={user.avatar_url}
                                     html_url={user.html_url}
-                                    active={this.state.active}
-                                    keyPress={e => this.handleKeyPress(e, user.html_url)}
+                                    active={this.props.users.users[this.state.activeIndex]}
+                                    tabIndex={this.state.activeIndex}
+                                    handleUserClick={(e) => this.handleUserClick(e)}
                                 />
                             }) : null}
                     </div>
                 </div>
                 <div className='placeholder'>
-                    <h1>I am a placeholder</h1>
+                    <h2>Here are some adorable puppies and kittens!</h2>
+                    <img src={puppies} alt='puppies-placeholder' />
+                    <img src={kittenAndPuppy} alt='puppies-placeholder' />
+                    <img src={kittens} alt='puppies-placeholder' />
                 </div>
                 <div className='placeholder'>
-                    <h1>I should stay where I am when the search is performed</h1>
+                    <h2>Placeholder 2</h2>
                 </div>
             </div>
         );
