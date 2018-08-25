@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {usersAction} from "./actions";
 
-const token = '2f860780efcb7da14fb76198a82327328d54a484'
+const token = '**************************************'
 
 const instance = axios.create({
     baseURL: 'https://some-domain.com/api/',
