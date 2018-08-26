@@ -5,7 +5,6 @@ import {fetchUsers} from "../../store/helpers/helpers";
 import SearchResult from "../../components/SearchResult";
 import puppies from "../../assets/images/puppies.jpeg"
 import kittenAndPuppy from "../../assets/images/kitten_puppy.jpg"
-import kittens from "../../assets/images/kittens.jpg"
 
 
 class App extends Component {
@@ -28,13 +27,13 @@ class App extends Component {
     }
 
     componentWillReceiveProps () {
-        if (this.props.data.users) {
+        if (this.props.users) {
             this.setState({
-                active: this.props.data.users[this.state.activeIndex],
+                active: this.props.users[this.state.activeIndex],
             })
         }
-        if (this.props.data.error) {
-            this.setState({error: this.props.data.error})
+        if (this.props.error) {
+            this.setState({error: this.props.error})
         }
     }
 
@@ -43,20 +42,20 @@ class App extends Component {
     }
 
     handleUserClick = event => {
-        const clickedUser = this.props.data.users.find(user => user.login === event.currentTarget.innerHTML)
+        const clickedUser = this.props.users.find(user => user.login === event.currentTarget.innerHTML)
         window.location = clickedUser.html_url
     }
 
     handleEnterPress = event => {
-        if (event.key === 'Enter' && this.props.data.users) {
-            window.location = this.props.data.users[this.state.activeIndex].html_url;
+        if (event.key === 'Enter' && this.props.users) {
+            window.location = this.props.users[this.state.activeIndex].html_url;
         }
     }
 
     handleArrowPress = event => {
         let index = this.state.activeIndex
-        if (this.props.data.users && index <= this.props.data.users.length - 1) {
-            if (event.key === 'ArrowDown') {
+        if (this.props.users && index <= this.props.users.length - 1) {
+            if (event.key === 'ArrowDown' && index < this.props.users.length - 1) {
                 this.setState({activeIndex: index + 1})
             }
             if (event.key === 'ArrowUp' && index > 0) {
@@ -78,26 +77,25 @@ class App extends Component {
                            value={this.state.search}
                     />
                     <div className='search'>
-                        {this.props.data.users && this.state.search ?
-                            this.props.data.users.map(user => {
+                        {this.props.users && this.state.search ?
+                            this.props.users.map(user => {
                                 return <SearchResult
                                     key={user.id}
                                     user={user.login}
                                     avatar={user.avatar_url}
                                     html_url={user.html_url}
-                                    active={this.props.data.users[this.state.activeIndex]}
+                                    active={this.props.users[this.state.activeIndex]}
                                     handleUserClick={(e) => this.handleUserClick(e)}
                                 />
                             }) : null}
                     </div>
-                    {this.props.data.error && !this.props.data.users ? <div className='error'>Error! Please try again.</div> : null}
+                    {this.props.error && !this.props.users ? <div className='error'>Error! Please try again.</div> : null}
                 </div>
                 <div className='placeholder'>
                     <h2>Here are some adorable puppies and kittens!</h2>
                     <div>
                         <img src={puppies} alt='puppies-placeholder' />
                         <img src={kittenAndPuppy} alt='pup-kit-placeholder' />
-                        <img src={kittens} alt='kittens-placeholder' />
                     </div>
                 </div>
                 <div className='placeholder'>
@@ -110,7 +108,8 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return ({
-        data: state
+        users: state.users,
+        error: state.error
     })
 }
 

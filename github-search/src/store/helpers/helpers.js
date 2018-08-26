@@ -2,6 +2,10 @@ import axios from 'axios'
 import {errorAction, usersAction} from "../actions/actions";
 import {token} from './token'
 
+// your github access token goes here
+// generate your access token here: https://github.com/settings/tokens
+// const token = ''
+
 const instance = axios.create({
     baseURL: 'https://api.github.com/search/',
     timeout: 2000,
@@ -21,6 +25,5 @@ export const fetchUsers = searchString => dispatch => {
         })
         .catch((error) => {
             dispatch(errorAction(error))
-            console.log(error);
         });
 }
