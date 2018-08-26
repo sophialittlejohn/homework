@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './index.css';
 import {connect} from "react-redux";
-import {fetchUsers} from "../store/helpers";
+import {fetchUsers} from "../../store/helpers/helpers";
 import SearchResult from "../../components/SearchResult";
 import puppies from "../../assets/images/puppies.jpeg"
 import kittenAndPuppy from "../../assets/images/kitten_puppy.jpg"
@@ -15,6 +15,7 @@ class App extends Component {
         this.state = {
             search: '',
             activeIndex: 0,
+            error: null
         }
     }
 
@@ -27,10 +28,13 @@ class App extends Component {
     }
 
     componentWillReceiveProps () {
-        if (this.props.users.users) {
+        if (this.props.data.users) {
             this.setState({
-                active: this.props.users.users[this.state.activeIndex],
+                active: this.props.data.users[this.state.activeIndex],
             })
+        }
+        if (this.props.data.error) {
+            this.setState({error: this.props.data.error})
         }
     }
 
@@ -38,15 +42,20 @@ class App extends Component {
         this.setState({search: e.currentTarget.value}, () => this.props.dispatch(fetchUsers(this.state.search)))
     }
 
+    handleUserClick = event => {
+        const clickedUser = this.props.data.users.find(user => user.login === event.currentTarget.innerHTML)
+        window.location = clickedUser.html_url
+    }
+
     handleEnterPress = event => {
-        if (event.key === 'Enter' && this.props.users.users) {
-            window.location = this.props.users.users[this.state.activeIndex].html_url;
+        if (event.key === 'Enter' && this.props.data.users) {
+            window.location = this.props.data.users[this.state.activeIndex].html_url;
         }
     }
 
     handleArrowPress = event => {
         let index = this.state.activeIndex
-        if (this.props.users.users && index <= this.props.users.users.length - 1) {
+        if (this.props.data.users && index <= this.props.data.users.length - 1) {
             if (event.key === 'ArrowDown') {
                 this.setState({activeIndex: index + 1})
             }
@@ -56,16 +65,11 @@ class App extends Component {
         }
     }
 
-    handleUserClick = event => {
-        const clickedUser = this.props.users.users.find(user => user.login === event.currentTarget.innerHTML)
-        window.location = clickedUser.html_url
-    }
-
     render () {
         return (
             <div className="container">
                 <h1>Sophia's Github User Search</h1>
-                <div className='search'>
+                <div className='search-container'>
                     <input type='text'
                            placeholder='Search Github Users...'
                            className='search-input'
@@ -73,26 +77,28 @@ class App extends Component {
                            onKeyDown={(e) => this.handleEnterPress(e)}
                            value={this.state.search}
                     />
-                    <div className='search-container'>
-                        {this.props.users.users && this.state.search ?
-                            this.props.users.users.map(user => {
+                    <div className='search'>
+                        {this.props.data.users && this.state.search ?
+                            this.props.data.users.map(user => {
                                 return <SearchResult
                                     key={user.id}
                                     user={user.login}
                                     avatar={user.avatar_url}
                                     html_url={user.html_url}
-                                    active={this.props.users.users[this.state.activeIndex]}
-                                    tabIndex={this.state.activeIndex}
+                                    active={this.props.data.users[this.state.activeIndex]}
                                     handleUserClick={(e) => this.handleUserClick(e)}
                                 />
                             }) : null}
                     </div>
+                    {this.props.data.error && !this.props.data.users ? <div className='error'>Error! Please try again.</div> : null}
                 </div>
                 <div className='placeholder'>
                     <h2>Here are some adorable puppies and kittens!</h2>
-                    <img src={puppies} alt='puppies-placeholder' />
-                    <img src={kittenAndPuppy} alt='puppies-placeholder' />
-                    <img src={kittens} alt='puppies-placeholder' />
+                    <div>
+                        <img src={puppies} alt='puppies-placeholder' />
+                        <img src={kittenAndPuppy} alt='pup-kit-placeholder' />
+                        <img src={kittens} alt='kittens-placeholder' />
+                    </div>
                 </div>
                 <div className='placeholder'>
                     <h2>Placeholder 2</h2>
@@ -104,7 +110,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return ({
-        users: state
+        data: state
     })
 }
 

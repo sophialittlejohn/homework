@@ -1,7 +1,6 @@
 .container {
   margin: 40px 30px;
   background: #eaeaea;
-  color: darkolivegreen;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -9,17 +8,9 @@
   padding: 20px;
 }
 
-.search {
+.search-container {
   padding: 20px 0;
   width: 260px;
-}
-
-.search-container {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  box-shadow: 1px 0 15px 0 rgba(31, 31, 72, 0.3);
-  color: #967cbe;
-  width: inherit;
 }
 
 .search-input {
@@ -35,15 +26,12 @@
   outline: none;
 }
 
-.search-avatar {
-  height: 40px;
-  width: 40px;
-  border-radius: 100%;
-  margin-right: 10px;
-}
-
-.search-element {
-  padding: 0 10px;
+.search {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 1px 0 15px 0 rgba(31, 31, 72, 0.3);
+  color: #967cbe;
+  width: inherit;
 }
 
 .placeholder {
@@ -53,6 +41,17 @@
 }
 .placeholder img {
   height: 100px;
+}
+.placeholder div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.error {
+  color: red;
+  margin: 10px 0;
 }
 
 /*# sourceMappingURL=index.css.map */

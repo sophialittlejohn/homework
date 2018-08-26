@@ -15,4 +15,11 @@
   outline: none;
 }
 
+.result-avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 100%;
+  margin-right: 10px;
+}
+
 /*# sourceMappingURL=index.css.map */
